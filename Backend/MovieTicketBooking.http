@@ -1,0 +1,67 @@
+@host = https://localhost:7100
+@token = PASTE_TOKEN_HERE
+
+### 1. Login as the seeded admin (copy "token" from the response into @token above)
+POST {{host}}/api/auth/login
+Content-Type: application/json
+
+{ "email": "admin@movieticket.local", "password": "Admin@12345" }
+
+### 2. Register a customer
+POST {{host}}/api/auth/register
+Content-Type: application/json
+
+{ "fullName": "Arun", "email": "arun@example.com", "phone": "9876543210", "password": "Customer@123" }
+
+### 3. (Admin token) Create movie
+POST {{host}}/api/movies
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{ "title": "Leo", "description": "Action thriller", "durationMinutes": 164, "releaseDate": "2023-10-19", "language": "Tamil", "genre": "Action" }
+
+### 4. (Admin token) Create theatre
+POST {{host}}/api/theatres
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{ "name": "PVR Cinemas", "location": "Thiruvananthapuram" }
+
+### 5. (Admin token) Create screen
+POST {{host}}/api/screens
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{ "theatreId": 1, "screenName": "Screen 1" }
+
+### 6. (Admin token) Bulk seats: rows A-B, 5 seats each
+POST {{host}}/api/seats/bulk
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{ "screenId": 1, "rows": [ { "rowName": "A", "seatCount": 5, "seatType": "Premium" }, { "rowName": "B", "seatCount": 5, "seatType": "Regular" } ] }
+
+### 7. (Admin token) Schedule show  (generates ShowSeats automatically)
+POST {{host}}/api/shows
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{ "movieId": 1, "screenId": 1, "startTime": "2026-12-01T10:00:00", "endTime": "2026-12-01T12:44:00", "ticketPrice": 250.00 }
+
+### 8. Public: seat layout
+GET {{host}}/api/shows/1/seats
+
+### 9. (Customer token) Book seats
+POST {{host}}/api/bookings
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{ "customerName": "Arun", "customerPhone": "9876543210", "showId": 1, "seatIds": [1, 2, 3] }
+
+### 10. (Customer token) My bookings
+GET {{host}}/api/bookings/my
+Authorization: Bearer {{token}}
+
+### 11. (Customer token) Cancel booking
+PUT {{host}}/api/bookings/1/cancel
+Authorization: Bearer {{token}}
