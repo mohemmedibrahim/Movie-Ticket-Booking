@@ -1,0 +1,31 @@
+<header class="top">
+  <div class="wrap bar">
+    <a routerLink="/" class="logo" (click)="menu.set(false)">
+      <svg width="26" height="26" viewBox="0 0 32 32" aria-hidden="true"><path d="M4 11h24v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z" fill="currentColor"/><path d="M4 11l3-6h5l-3 6M12 11l3-6h5l-3 6M20 11l3-6h5l-3 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+      Marquee
+    </a>
+    <button class="burger btn ghost sm" (click)="menu.set(!menu())" aria-label="Menu" [attr.aria-expanded]="menu()">Menu</button>
+    <nav [class.open]="menu()" (click)="menu.set(false)">
+      <a routerLink="/" routerLinkActive="act" [routerLinkActiveOptions]="{exact: true}">Movies</a>
+      @if (auth.isLoggedIn()) { <a routerLink="/my-bookings" routerLinkActive="act">My bookings</a> }
+      @if (auth.isAdmin()) { <a routerLink="/admin" routerLinkActive="act">Admin</a> }
+      <span class="grow"></span>
+      <button class="btn ghost sm" (click)="toggleTheme(); $event.stopPropagation()" [attr.aria-label]="'Switch to ' + (theme() === 'dark' ? 'light' : 'dark') + ' theme'">{{ theme() === 'dark' ? 'Light' : 'Dark' }}</button>
+      @if (auth.user(); as u) {
+        <span class="who">{{ u.fullName }}</span>
+        <button class="btn sm" (click)="auth.logout()">Sign out</button>
+      } @else {
+        <a routerLink="/login" class="btn sm">Sign in</a>
+        <a routerLink="/register" class="btn primary sm">Sign up</a>
+      }
+    </nav>
+  </div>
+</header>
+
+<main class="wrap page"><router-outlet /></main>
+
+<div class="toasts" aria-live="polite">
+  @for (t of toasts.list(); track t.id) {
+    <div class="toast" [class.err]="t.kind === 'err'">{{ t.text }}</div>
+  }
+</div>
